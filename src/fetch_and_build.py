@@ -2,7 +2,7 @@ import os, json, pathlib, datetime
 from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from yahoo_client import YahooClient
-from normalize import extract_game_key, league_key, map_standings, map_scoreboard, map_roster
+from normalize import extract_game_key, league_key, map_standings, map_scoreboard, map_roster, map_teams
 
 load_dotenv()
 
@@ -53,7 +53,7 @@ if TEAM_ID:
     my_team = map_roster(roster)
 
 # 5) Persist raw for debugging
-ts = datetime.datetime.utcnow().isoformat() + "Z"
+ts = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
 json.dump({"fetched_at": ts, "payload": standings}, open(DATA_DIR/"standings.json", "w"))
 json.dump({"fetched_at": ts, "payload": scoreboard}, open(DATA_DIR/"scoreboard.json", "w"))
 json.dump({"fetched_at": ts, "payload": teams}, open(DATA_DIR/"teams.json", "w"))
@@ -70,13 +70,7 @@ index_html = render("index.html",
 open(SITE_DIR/"index.html", "w").write(index_html)
 
 # Per-team pages (names + links)
-team_list = []
-for t in teams["fantasy_content"]["league"][1]["teams"]:
-    tj = t["team"][0]
-    team_key = tj["team_key"]
-    name = tj[2]["name"]
-    slug = team_key.replace(".", "-")
-    team_list.append({"name": name, "team_key": team_key, "slug": slug})
+team_list = map_teams(teams)
 
 # Basic roster snapshot per team (optional: skip to reduce calls)
 for t in team_list:
