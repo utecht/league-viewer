@@ -1,0 +1,14 @@
+{% set title = "Week " ~ week %}
+{% set heading = "Week " ~ week %}
+{% set my_team_slug = None %}
+{% set content %}
+<section>
+  <h2>Matchups</h2>
+  <ul>
+  {% for m in matchups %}
+    <li>{{ m.teams[0].name }} ({{ m.teams[0].points }}) vs {{ m.teams[1].name }} ({{ m.teams[1].points }})</li>
+  {% endfor %}
+  </ul>
+</section>
+{% endset %}
+{% include "base.html" %}
