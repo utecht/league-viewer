@@ -2,10 +2,10 @@ name: Build and Publish
 
 on:
   schedule:
-    - cron: "0 */4 * * *"   # every 4 hours
+    - cron: "0 */4 * * *" # every 4 hours
   workflow_dispatch: {}
   push:
-    branches: [ main ]
+    branches: [master]
 
 permissions:
   contents: write
