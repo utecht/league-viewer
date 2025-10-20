@@ -12,3 +12,9 @@ https://<YOUR_USERNAME>.github.io/<YOUR_REPO>/461-l-842342-t-10.html
 https://<YOUR_USERNAME>.github.io/<YOUR_REPO>/461-l-842342-t-11.html
 https://<YOUR_USERNAME>.github.io/<YOUR_REPO>/461-l-842342-t-12.html
 https://<YOUR_USERNAME>.github.io/<YOUR_REPO>/week-7.html
+https://<YOUR_USERNAME>.github.io/<YOUR_REPO>/week-7-matchup-1.html
+https://<YOUR_USERNAME>.github.io/<YOUR_REPO>/week-7-matchup-2.html
+https://<YOUR_USERNAME>.github.io/<YOUR_REPO>/week-7-matchup-3.html
+https://<YOUR_USERNAME>.github.io/<YOUR_REPO>/week-7-matchup-4.html
+https://<YOUR_USERNAME>.github.io/<YOUR_REPO>/week-7-matchup-5.html
+https://<YOUR_USERNAME>.github.io/<YOUR_REPO>/week-7-matchup-6.html

@@ -2,6 +2,7 @@
 
 
 
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -9,43 +10,503 @@
   <title>Week 7</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:20px;line-height:1.4}
-    header,footer{margin:12px 0}
-    table{border-collapse:collapse;width:100%}
-    th,td{border:1px solid #ddd;padding:8px}
-    th{background:#f6f6f6;text-align:left}
-    .muted{color:#666;font-size:0.9em}
-    nav a{margin-right:10px}
+    :root {
+      color-scheme: light;
+      --page-bg: #f3f4f8;
+      --card-bg: #ffffff;
+      --primary: #1f6feb;
+      --primary-light: #e7f1ff;
+      --text-color: #1f2933;
+      --muted: #5f6c7b;
+      --border: #d2d6dc;
+      --shadow: 0 12px 24px rgba(31, 47, 70, 0.08);
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 32px 16px 48px;
+      line-height: 1.6;
+      background: radial-gradient(circle at top left, #fefefe, var(--page-bg));
+      color: var(--text-color);
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    a:hover,
+    a:focus {
+      text-decoration: underline;
+    }
+
+    .page-shell {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: var(--card-bg);
+      padding: 28px 32px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    header h1 {
+      margin: 0 0 12px;
+      font-size: clamp(1.75rem, 3vw, 2.25rem);
+      letter-spacing: -0.02em;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    nav a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    nav a:hover,
+    nav a:focus {
+      background: rgba(31, 111, 235, 0.16);
+      transform: translateY(-1px);
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    section {
+      background: var(--card-bg);
+      padding: 24px 28px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    section h2 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      font-size: 1.4rem;
+      letter-spacing: -0.01em;
+    }
+
+    .cards {
+      display: grid;
+      gap: 16px;
+    }
+
+    .cards > li,
+    .matchup-card {
+      list-style: none;
+      background: linear-gradient(135deg, rgba(31, 111, 235, 0.08), rgba(31, 111, 235, 0.02));
+      border-radius: calc(var(--radius) - 6px);
+      padding: 16px 18px;
+      border: 1px solid rgba(31, 111, 235, 0.1);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      overflow: hidden;
+      border-radius: calc(var(--radius) - 6px);
+      background: #fff;
+    }
+
+    th,
+    td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      font-size: 0.95rem;
+    }
+
+    th {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      background: #f8f9fb;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #fbfcff;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--text-color);
+    }
+
+    .list-unstyled {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 0.9em;
+    }
+
+    .bench-row {
+      background: #fff7ed;
+    }
+
+    .bench-row td {
+      border-bottom-color: #f4c28f;
+    }
+
+    .bench-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      margin-left: 8px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-radius: 999px;
+      background: #f97316;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .ir-row {
+      background: #fef2f2;
+    }
+
+    .ir-row td {
+      border-bottom-color: #fca5a5;
+    }
+
+    .ir-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      margin-left: 8px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-radius: 999px;
+      background: #dc2626;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .matchup-scoreline {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .score-number {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin: 8px 0;
+    }
+
+    .score-divider {
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--muted);
+    }
+
+    .matchup-grid {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    .team-panel table {
+      margin-top: 12px;
+    }
+
+    .points-cell,
+    th.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .slot-cell {
+      font-weight: 600;
+      white-space: nowrap;
+      color: #b54708;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 24px 14px 40px;
+      }
+
+      header,
+      section {
+        padding: 20px;
+      }
+
+      table,
+      th,
+      td {
+        font-size: 0.9rem;
+      }
+
+      .matchup-scoreline {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .score-divider {
+        display: none;
+      }
+    }
   </style>
 </head>
 <body>
-<header>
-  <h1>Week 7</h1>
-  <nav>
-    <a href="./index.html">Home</a>
+<div class="page-shell">
+  <header>
+    <h1>Week 7</h1>
+    <nav>
+      <a href="./index.html">🏠 Home</a>
+      
+    </nav>
+  </header>
+  <main>
     
-  </nav>
-</header>
-
 <section>
   <h2>Matchups</h2>
-  <ul>
+  <div class="cards">
   
-    <li>LSU Craig (149.48) vs Robber Barons (203.34)</li>
+    <div class="matchup-card">
+      <div class="muted">Week 7</div>
+      <div><strong>LSU Craig</strong> — 149.48 pts</div>
+      <div><strong>Robber Barons</strong> — 203.34 pts</div>
+      
+      <div class="muted">Projected: 135.39 / 153.57</div>
+      
+      
+      <div><a href="./week-7-matchup-1.html">Matchup details →</a></div>
+      
+    </div>
   
-    <li>bryce&#39;s Great Team (95.5) vs Jackson (143.96)</li>
+    <div class="matchup-card">
+      <div class="muted">Week 7</div>
+      <div><strong>bryce&#39;s Great Team</strong> — 95.5 pts</div>
+      <div><strong>Jackson</strong> — 152.16 pts</div>
+      
+      <div class="muted">Projected: 138.25 / 131.4</div>
+      
+      
+      <div><a href="./week-7-matchup-2.html">Matchup details →</a></div>
+      
+    </div>
   
-    <li>The Alabama Mans (140.9) vs Trogdor the Burninator (94.5)</li>
+    <div class="matchup-card">
+      <div class="muted">Week 7</div>
+      <div><strong>The Alabama Mans</strong> — 140.9 pts</div>
+      <div><strong>Trogdor the Burninator</strong> — 94.5 pts</div>
+      
+      <div class="muted">Projected: 137.35 / 140.94</div>
+      
+      
+      <div><a href="./week-7-matchup-3.html">Matchup details →</a></div>
+      
+    </div>
   
-    <li>The 12th Man (104.96) vs Shapeshifters (134.54)</li>
+    <div class="matchup-card">
+      <div class="muted">Week 7</div>
+      <div><strong>The 12th Man</strong> — 104.96 pts</div>
+      <div><strong>Shapeshifters</strong> — 155.74 pts</div>
+      
+      <div class="muted">Projected: 138.32 / 142.14</div>
+      
+      
+      <div><a href="./week-7-matchup-4.html">Matchup details →</a></div>
+      
+    </div>
   
-    <li>Matt&#39;s Meeples (126.9) vs Dolphan (132.34)</li>
+    <div class="matchup-card">
+      <div class="muted">Week 7</div>
+      <div><strong>Matt&#39;s Meeples</strong> — 168.0 pts</div>
+      <div><strong>Dolphan</strong> — 132.34 pts</div>
+      
+      <div class="muted">Projected: 149.56 / 141.53</div>
+      
+      
+      <div><a href="./week-7-matchup-5.html">Matchup details →</a></div>
+      
+    </div>
   
-    <li>Mighty Taniwha (129.08) vs Charlestown Chiefs (169.68)</li>
+    <div class="matchup-card">
+      <div class="muted">Week 7</div>
+      <div><strong>Mighty Taniwha</strong> — 129.08 pts</div>
+      <div><strong>Charlestown Chiefs</strong> — 169.68 pts</div>
+      
+      <div class="muted">Projected: 150.73 / 147.19</div>
+      
+      
+      <div><a href="./week-7-matchup-6.html">Matchup details →</a></div>
+      
+    </div>
   
-  </ul>
+  </div>
 </section>
 
-<footer class="muted">Updated 2025-10-20T00:14:30.310055Z</footer>
+  </main>
+  <footer>Updated 2025-10-20T04:28:26.257059Z</footer>
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SportsEvent",
+  "name": "Week 7 Matchups",
+  "startDate": "2025-10-20T04:28:26.257059Z",
+  "subEvent": [
+    {
+      "slug": "week-7-matchup-1.html",
+      "teams": [
+        {
+          "name": "LSU Craig",
+          "points": 149.48,
+          "proj": 135.39,
+          "team_key": "461.l.842342.t.1"
+        },
+        {
+          "name": "Robber Barons",
+          "points": 203.34,
+          "proj": 153.57,
+          "team_key": "461.l.842342.t.5"
+        }
+      ],
+      "week": 7
+    },
+    {
+      "slug": "week-7-matchup-2.html",
+      "teams": [
+        {
+          "name": "bryce\u0027s Great Team",
+          "points": 95.5,
+          "proj": 138.25,
+          "team_key": "461.l.842342.t.2"
+        },
+        {
+          "name": "Jackson",
+          "points": 152.16,
+          "proj": 131.4,
+          "team_key": "461.l.842342.t.6"
+        }
+      ],
+      "week": 7
+    },
+    {
+      "slug": "week-7-matchup-3.html",
+      "teams": [
+        {
+          "name": "The Alabama Mans",
+          "points": 140.9,
+          "proj": 137.35,
+          "team_key": "461.l.842342.t.3"
+        },
+        {
+          "name": "Trogdor the Burninator",
+          "points": 94.5,
+          "proj": 140.94,
+          "team_key": "461.l.842342.t.9"
+        }
+      ],
+      "week": 7
+    },
+    {
+      "slug": "week-7-matchup-4.html",
+      "teams": [
+        {
+          "name": "The 12th Man",
+          "points": 104.96,
+          "proj": 138.32,
+          "team_key": "461.l.842342.t.4"
+        },
+        {
+          "name": "Shapeshifters",
+          "points": 155.74,
+          "proj": 142.14,
+          "team_key": "461.l.842342.t.11"
+        }
+      ],
+      "week": 7
+    },
+    {
+      "slug": "week-7-matchup-5.html",
+      "teams": [
+        {
+          "name": "Matt\u0027s Meeples",
+          "points": 168.0,
+          "proj": 149.56,
+          "team_key": "461.l.842342.t.7"
+        },
+        {
+          "name": "Dolphan",
+          "points": 132.34,
+          "proj": 141.53,
+          "team_key": "461.l.842342.t.10"
+        }
+      ],
+      "week": 7
+    },
+    {
+      "slug": "week-7-matchup-6.html",
+      "teams": [
+        {
+          "name": "Mighty Taniwha",
+          "points": 129.08,
+          "proj": 150.73,
+          "team_key": "461.l.842342.t.8"
+        },
+        {
+          "name": "Charlestown Chiefs",
+          "points": 169.68,
+          "proj": 147.19,
+          "team_key": "461.l.842342.t.12"
+        }
+      ],
+      "week": 7
+    }
+  ]
+}
+</script>
+
 </body>
 </html>

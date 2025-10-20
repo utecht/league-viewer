@@ -1,0 +1,810 @@
+
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Week 7 Matchup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      color-scheme: light;
+      --page-bg: #f3f4f8;
+      --card-bg: #ffffff;
+      --primary: #1f6feb;
+      --primary-light: #e7f1ff;
+      --text-color: #1f2933;
+      --muted: #5f6c7b;
+      --border: #d2d6dc;
+      --shadow: 0 12px 24px rgba(31, 47, 70, 0.08);
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 32px 16px 48px;
+      line-height: 1.6;
+      background: radial-gradient(circle at top left, #fefefe, var(--page-bg));
+      color: var(--text-color);
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    a:hover,
+    a:focus {
+      text-decoration: underline;
+    }
+
+    .page-shell {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: var(--card-bg);
+      padding: 28px 32px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    header h1 {
+      margin: 0 0 12px;
+      font-size: clamp(1.75rem, 3vw, 2.25rem);
+      letter-spacing: -0.02em;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    nav a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    nav a:hover,
+    nav a:focus {
+      background: rgba(31, 111, 235, 0.16);
+      transform: translateY(-1px);
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    section {
+      background: var(--card-bg);
+      padding: 24px 28px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    section h2 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      font-size: 1.4rem;
+      letter-spacing: -0.01em;
+    }
+
+    .cards {
+      display: grid;
+      gap: 16px;
+    }
+
+    .cards > li,
+    .matchup-card {
+      list-style: none;
+      background: linear-gradient(135deg, rgba(31, 111, 235, 0.08), rgba(31, 111, 235, 0.02));
+      border-radius: calc(var(--radius) - 6px);
+      padding: 16px 18px;
+      border: 1px solid rgba(31, 111, 235, 0.1);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      overflow: hidden;
+      border-radius: calc(var(--radius) - 6px);
+      background: #fff;
+    }
+
+    th,
+    td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      font-size: 0.95rem;
+    }
+
+    th {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      background: #f8f9fb;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #fbfcff;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--text-color);
+    }
+
+    .list-unstyled {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 0.9em;
+    }
+
+    .bench-row {
+      background: #fff7ed;
+    }
+
+    .bench-row td {
+      border-bottom-color: #f4c28f;
+    }
+
+    .bench-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      margin-left: 8px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-radius: 999px;
+      background: #f97316;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .ir-row {
+      background: #fef2f2;
+    }
+
+    .ir-row td {
+      border-bottom-color: #fca5a5;
+    }
+
+    .ir-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      margin-left: 8px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-radius: 999px;
+      background: #dc2626;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .matchup-scoreline {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .score-number {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin: 8px 0;
+    }
+
+    .score-divider {
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--muted);
+    }
+
+    .matchup-grid {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    .team-panel table {
+      margin-top: 12px;
+    }
+
+    .points-cell,
+    th.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .slot-cell {
+      font-weight: 600;
+      white-space: nowrap;
+      color: #b54708;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 24px 14px 40px;
+      }
+
+      header,
+      section {
+        padding: 20px;
+      }
+
+      table,
+      th,
+      td {
+        font-size: 0.9rem;
+      }
+
+      .matchup-scoreline {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .score-divider {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="page-shell">
+  <header>
+    <h1>Week 7 · The Alabama Mans vs Trogdor the Burninator</h1>
+    <nav>
+      <a href="./index.html">🏠 Home</a>
+      
+    </nav>
+  </header>
+  <main>
+    
+<section>
+  <h2>Matchup Summary</h2>
+  <p class="muted">Week 7 · Season 2025 · Matchup 3</p>
+  <div class="matchup-scoreline">
+    <div>
+      <h3>The Alabama Mans</h3>
+      <div class="score-number">140.90</div>
+      
+        <div class="muted">Projected 137.35</div>
+      
+    </div>
+    <div class="score-divider">vs</div>
+    <div>
+      <h3>Trogdor the Burninator</h3>
+      <div class="score-number">94.50</div>
+      
+        <div class="muted">Projected 140.94</div>
+      
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Player Points</h2>
+  <div class="matchup-grid">
+    
+    <div class="team-panel">
+      <h3>The Alabama Mans</h3>
+      <table>
+        <thead>
+          <tr><th>Slot</th><th>Player</th><th class="num">Pts</th></tr>
+        </thead>
+        <tbody>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              QB
+              
+            </td>
+            <td>Baker Mayfield</td>
+            <td class="points-cell">
+              
+                0.00
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Ja&#39;Marr Chase</td>
+            <td class="points-cell">
+              
+                41.10
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>A.J. Brown</td>
+            <td class="points-cell">
+              
+                30.10
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>Cam Skattebo</td>
+            <td class="points-cell">
+              
+                18.40
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>Jordan Mason</td>
+            <td class="points-cell">
+              
+                11.70
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              TE
+              
+            </td>
+            <td>Jake Ferguson</td>
+            <td class="points-cell">
+              
+                21.90
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              W/R/T
+              
+            </td>
+            <td>Ladd McConkey</td>
+            <td class="points-cell">
+              
+                15.70
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              K
+              
+            </td>
+            <td>Daniel Carlson</td>
+            <td class="points-cell">
+              
+                0.00
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              DEF
+              
+            </td>
+            <td>Detroit</td>
+            <td class="points-cell">
+              
+                0.00
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              D
+              
+            </td>
+            <td>Nick Bolton</td>
+            <td class="points-cell">
+              
+                2.00
+              
+            </td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>TreVeyon Henderson</td>
+            <td class="points-cell">
+              
+                0.50
+              
+            </td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Dak Prescott</td>
+            <td class="points-cell">
+              
+                35.26
+              
+            </td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Jerry Jeudy</td>
+            <td class="points-cell">
+              
+                3.70
+              
+            </td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Luke McCaffrey</td>
+            <td class="points-cell">
+              
+                0.00
+              
+            </td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="team-panel">
+      <h3>Trogdor the Burninator</h3>
+      <table>
+        <thead>
+          <tr><th>Slot</th><th>Player</th><th class="num">Pts</th></tr>
+        </thead>
+        <tbody>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              QB
+              
+            </td>
+            <td>Sam Darnold</td>
+            <td class="points-cell">
+              
+                0.00
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Jaxon Smith-Njigba</td>
+            <td class="points-cell">
+              
+                0.00
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Chris Olave</td>
+            <td class="points-cell">
+              
+                26.80
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>J.K. Dobbins</td>
+            <td class="points-cell">
+              
+                9.00
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>Rachaad White</td>
+            <td class="points-cell">
+              
+                0.00
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              TE
+              
+            </td>
+            <td>T.J. Hockenson</td>
+            <td class="points-cell">
+              
+                10.30
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              W/R/T
+              
+            </td>
+            <td>Ashton Jeanty</td>
+            <td class="points-cell">
+              
+                4.40
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              K
+              
+            </td>
+            <td>Jason Myers</td>
+            <td class="points-cell">
+              
+                0.00
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              DEF
+              
+            </td>
+            <td>Green Bay</td>
+            <td class="points-cell">
+              
+                27.50
+              
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              D
+              
+            </td>
+            <td>Nick Cross</td>
+            <td class="points-cell">
+              
+                16.50
+              
+            </td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Jalen Hurts</td>
+            <td class="points-cell">
+              
+                38.04
+              
+            </td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Zay Flowers</td>
+            <td class="points-cell">
+              
+                0.00
+              
+            </td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Cooper Kupp</td>
+            <td class="points-cell">
+              
+                0.00
+              
+            </td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Bucky Irving</td>
+            <td class="points-cell">
+              
+                0.00
+              
+            </td>
+          </tr>
+          
+          
+          <tr class="ir-row">
+            <td class="slot-cell">
+              IR
+              
+                <span class="ir-badge">IR</span>
+              
+            </td>
+            <td>Dalton Kincaid</td>
+            <td class="points-cell">
+              
+                0.00
+              
+            </td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </div>
+</section>
+
+  </main>
+  <footer>Updated 2025-10-20T04:28:26.257059Z</footer>
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SportsEvent",
+  "competitor": [
+    {
+      "@type": "SportsTeam",
+      "name": "The Alabama Mans"
+    },
+    {
+      "@type": "SportsTeam",
+      "name": "Trogdor the Burninator"
+    }
+  ],
+  "name": "Week 7 \u00b7 The Alabama Mans vs Trogdor the Burninator",
+  "startDate": "2025-10-20T04:28:26.257059Z"
+}
+</script>
+
+</body>
+</html>
