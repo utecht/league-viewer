@@ -147,10 +147,34 @@ def map_roster(roster_json: Dict[str, Any]) -> Dict[str, Any]:
                 slot = pos.get("position") or pos.get("name") or pos.get("_")
                 if slot:
                     eligible.append(slot)
+        selected_position = None
+        for section in player_sections[1:]:
+            if not isinstance(section, dict):
+                continue
+            if "selected_position" in section:
+                pos_block = section["selected_position"]
+            elif "starting_position" in section:
+                pos_block = section["starting_position"]
+            else:
+                pos_block = None
+            if isinstance(pos_block, dict):
+                selected_position = (
+                    pos_block.get("position")
+                    or pos_block.get("name")
+                    or pos_block.get("display_position")
+                )
+            elif isinstance(pos_block, str):
+                selected_position = pos_block
+            if selected_position:
+                break
+        bench_slots = {"BN", "BENCH"}
+        on_bench = (selected_position or "").upper() in bench_slots
         out.append({
             "player_key": pmeta.get("player_key"),
             "name": pmeta.get("name", {}).get("full") if isinstance(pmeta.get("name"), dict) else pmeta.get("name"),
             "eligible_positions": eligible,
+            "selected_position": selected_position,
+            "on_bench": on_bench,
         })
     return {"team_key": meta.get("team_key"), "name": meta.get("name"), "players": out}
 
