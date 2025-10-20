@@ -1,6 +1,20 @@
 {% set title = "League Overview" %}
 {% set heading = "League Overview" %}
 {% set my_team_slug = None %}
+{% set structured_data = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": heading,
+  "dateModified": updated_at,
+  "about": {
+    "@type": "SportsOrganization",
+    "name": "Fantasy League",
+    "sport": "Fantasy Football",
+    "season": season,
+    "member": standings
+  },
+  "event": scoreboard
+} %}
 {% extends "base.html" %}
 {% block body %}{% endblock %}
 {% set content %}
@@ -20,14 +34,18 @@
 <section>
   <h2>This Week</h2>
   {% if scoreboard %}
-    <ul>
+    <div class="cards">
       {% for m in scoreboard %}
-        <li>Week {{ m.week }}:
-          {{ m.teams[0].name }} ({{ m.teams[0].points }}) vs {{ m.teams[1].name }} ({{ m.teams[1].points }})
-          {% if m.teams[0].proj and m.teams[1].proj %} — Proj: {{ m.teams[0].proj }} / {{ m.teams[1].proj }}{% endif %}
-        </li>
+      <div class="matchup-card">
+        <div class="muted">Week {{ m.week }}</div>
+        <div><strong>{{ m.teams[0].name }}</strong> — {{ m.teams[0].points }} pts</div>
+        <div><strong>{{ m.teams[1].name }}</strong> — {{ m.teams[1].points }} pts</div>
+        {% if m.teams[0].proj and m.teams[1].proj %}
+        <div class="muted">Projected: {{ m.teams[0].proj }} / {{ m.teams[1].proj }}</div>
+        {% endif %}
+      </div>
       {% endfor %}
-    </ul>
+    </div>
     <p><a href="./week-{{ scoreboard[0].week }}.html">Week {{ scoreboard[0].week }} details →</a></p>
   {% else %}
     <p>No current week data.</p>
