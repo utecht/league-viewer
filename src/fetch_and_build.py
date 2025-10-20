@@ -4,7 +4,11 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from yahoo_client import YahooClient
 from normalize import extract_game_key, league_key, map_standings, map_scoreboard, map_roster, map_teams
 
-load_dotenv()
+ROOT_DIR = pathlib.Path(__file__).resolve().parents[1]
+DEV_ENV = ROOT_DIR / "dev.env"
+
+# Load environment variables from dev.env if present (fallback to process env)
+load_dotenv(DEV_ENV if DEV_ENV.exists() else None)
 
 CLIENT_ID = os.environ["YAHOO_CLIENT_ID"]
 CLIENT_SECRET = os.environ["YAHOO_CLIENT_SECRET"]
@@ -14,9 +18,9 @@ GAME_CODE = os.environ["GAME_CODE"]       # e.g. nfl
 SEASON = os.environ["SEASON"]             # e.g. 2025
 TEAM_ID = os.getenv("TEAM_ID")            # optional
 
-DATA_DIR = pathlib.Path("data")
-SITE_DIR = pathlib.Path("site")
-TPL_DIR = pathlib.Path("src/templates")
+DATA_DIR = ROOT_DIR / "data"
+SITE_DIR = ROOT_DIR / "site"
+TPL_DIR = ROOT_DIR / "src/templates"
 
 DATA_DIR.mkdir(exist_ok=True)
 SITE_DIR.mkdir(exist_ok=True)
@@ -43,6 +47,34 @@ teams = yc.get_json(f"league/{lkey}/teams")
 # 3) Normalize
 stand_rows = map_standings(standings)
 score_rows = map_scoreboard(scoreboard)
+matchup_pages = []
+if score_rows:
+    # Build per-matchup detail pages with weekly player point totals
+    for idx, matchup in enumerate(score_rows, start=1):
+        matchup_teams = matchup.get("teams", [])
+        if len(matchup_teams) != 2:
+            continue
+        week_val = matchup["week"]
+        detailed = []
+        for team in matchup_teams:
+            team_key = team["team_key"]
+            roster_stats = yc.get_json(f"team/{team_key}/roster/players/stats;type=week;week={week_val}")
+            roster_norm = map_roster(roster_stats)
+            detailed.append({
+                "team_key": roster_norm["team_key"],
+                "name": roster_norm["name"] or team["name"],
+                "points": team["points"],
+                "proj": team["proj"],
+                "players": roster_norm["players"],
+            })
+        slug = f"week-{week_val}-matchup-{idx}.html"
+        matchup["slug"] = slug
+        matchup_pages.append({
+            "slug": slug,
+            "week": week_val,
+            "teams": detailed,
+            "matchup_number": idx,
+        })
 
 # 4) Optionally fetch your team roster (if TEAM_ID set)
 my_team = None
@@ -61,6 +93,16 @@ if my_team:
     json.dump({"fetched_at": ts, "payload": my_team}, open(DATA_DIR/"my_team.json", "w"))
 
 # 6) Render pages
+for page in matchup_pages:
+    html = render("matchup.html",
+        updated_at=ts,
+        week=page["week"],
+        teams=page["teams"],
+        season=SEASON,
+        matchup_number=page["matchup_number"]
+    )
+    open(SITE_DIR/page["slug"], "w").write(html)
+
 index_html = render("index.html",
     updated_at=ts,
     standings=sorted(stand_rows, key=lambda r: (-r["pct"], -r["wins"])),
@@ -92,12 +134,15 @@ if score_rows:
         matchups=score_rows
     )
     open(SITE_DIR/f"week-{wk}.html", "w").write(week_html)
+else:
+    wk = None
 
 # Simple sitemap
 open(SITE_DIR/"robots.txt", "w").write("User-agent: *\nAllow: /\n")
 open(SITE_DIR/"sitemap.txt", "w").write("\n".join(
     ["https://<YOUR_USERNAME>.github.io/<YOUR_REPO>/"] +
     [f"https://<YOUR_USERNAME>.github.io/<YOUR_REPO>/{t['slug']}.html" for t in team_list] +
-    ([f"https://<YOUR_USERNAME>.github.io/<YOUR_REPO>/week-{score_rows[0]['week']}.html"] if score_rows else [])
+    ([f"https://<YOUR_USERNAME>.github.io/<YOUR_REPO>/week-{wk}.html"] if wk else []) +
+    [f"https://<YOUR_USERNAME>.github.io/<YOUR_REPO>/{m['slug']}" for m in matchup_pages]
 ))
 print("✅ Build complete.")

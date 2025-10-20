@@ -1,0 +1,76 @@
+{% set title = "Week " ~ week ~ " Matchup" %}
+{% set heading = "Week " ~ week ~ " · " ~ teams[0].name ~ " vs " ~ teams[1].name %}
+{% set my_team_slug = None %}
+{% set structured_data = {
+  "@context": "https://schema.org",
+  "@type": "SportsEvent",
+  "name": heading,
+  "startDate": updated_at,
+  "competitor": [
+    {"@type": "SportsTeam", "name": teams[0].name},
+    {"@type": "SportsTeam", "name": teams[1].name}
+  ]
+} %}
+{% set content %}
+<section>
+  <h2>Matchup Summary</h2>
+  <p class="muted">Week {{ week }} · Season {{ season }}{% if matchup_number %} · Matchup {{ matchup_number }}{% endif %}</p>
+  <div class="matchup-scoreline">
+    <div>
+      <h3>{{ teams[0].name }}</h3>
+      <div class="score-number">{{ "%.2f"|format(teams[0].points) }}</div>
+      {% if teams[0].proj %}
+        <div class="muted">Projected {{ "%.2f"|format(teams[0].proj) }}</div>
+      {% endif %}
+    </div>
+    <div class="score-divider">vs</div>
+    <div>
+      <h3>{{ teams[1].name }}</h3>
+      <div class="score-number">{{ "%.2f"|format(teams[1].points) }}</div>
+      {% if teams[1].proj %}
+        <div class="muted">Projected {{ "%.2f"|format(teams[1].proj) }}</div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Player Points</h2>
+  <div class="matchup-grid">
+    {% for team in teams %}
+    <div class="team-panel">
+      <h3>{{ team.name }}</h3>
+      <table>
+        <thead>
+          <tr><th>Slot</th><th>Player</th><th class="num">Pts</th></tr>
+        </thead>
+        <tbody>
+          {% for p in team.players %}
+          {% set row_class = (('bench-row ' if p.on_bench else '') + ('ir-row' if p.on_injured_reserve else '')).strip() %}
+          <tr{% if row_class %} class="{{ row_class }}"{% endif %}>
+            <td class="slot-cell">
+              {{ p.selected_position if p.selected_position else "—" }}
+              {% if p.on_bench %}
+                <span class="bench-badge">On Bench</span>
+              {% elif p.on_injured_reserve %}
+                <span class="ir-badge">IR</span>
+              {% endif %}
+            </td>
+            <td>{{ p.name }}</td>
+            <td class="points-cell">
+              {% if p.points is not none %}
+                {{ "%.2f"|format(p.points) }}
+              {% else %}
+                —
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endset %}
+{% include "base.html" %}

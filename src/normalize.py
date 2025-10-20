@@ -54,6 +54,30 @@ def _maybe_float(val: Any) -> Optional[float]:
         return None
 
 
+def _extract_slot_value(pos_block: Any) -> Optional[str]:
+    """
+    Yahoo returns selected_position blocks as either dicts, lists of dicts, or a mix
+    of both. This helper walks those structures and returns the first slot label.
+    """
+    if isinstance(pos_block, str):
+        return pos_block
+    if isinstance(pos_block, dict):
+        for key in ("position", "display_position", "name"):
+            val = pos_block.get(key)
+            if isinstance(val, str) and val:
+                return val
+        for child in _collection_values(pos_block):
+            slot = _extract_slot_value(child)
+            if slot:
+                return slot
+    if isinstance(pos_block, list):
+        for entry in pos_block:
+            slot = _extract_slot_value(entry)
+            if slot:
+                return slot
+    return None
+
+
 def league_key(game_key: str, league_id: str) -> str:
     # Yahoo league keys look like "{game_key}.l.{league_id}", where game_key is numeric
     return f"{game_key}.l.{league_id}"
@@ -136,7 +160,7 @@ def map_roster(roster_json: Dict[str, Any]) -> Dict[str, Any]:
     players = roster_block.get("0", {}).get("players") if isinstance(roster_block, dict) else roster_block.get("players")
     players = players if players is not None else roster_block
     out = []
-    for player_wrapper in _collection_values(players):
+    for idx, player_wrapper in enumerate(_collection_values(players)):
         player_sections = player_wrapper.get("player") if isinstance(player_wrapper, dict) else None
         if not player_sections or not isinstance(player_sections, list):
             continue
@@ -148,34 +172,50 @@ def map_roster(roster_json: Dict[str, Any]) -> Dict[str, Any]:
                 if slot:
                     eligible.append(slot)
         selected_position = None
+        points_total: Optional[float] = None
+        projected_total: Optional[float] = None
         for section in player_sections[1:]:
             if not isinstance(section, dict):
                 continue
+            pos_block = None
             if "selected_position" in section:
                 pos_block = section["selected_position"]
             elif "starting_position" in section:
                 pos_block = section["starting_position"]
-            else:
-                pos_block = None
-            if isinstance(pos_block, dict):
-                selected_position = (
-                    pos_block.get("position")
-                    or pos_block.get("name")
-                    or pos_block.get("display_position")
-                )
-            elif isinstance(pos_block, str):
-                selected_position = pos_block
-            if selected_position:
-                break
+            if pos_block is not None and selected_position is None:
+                selected_position = _extract_slot_value(pos_block)
+            if "player_points" in section and points_total is None:
+                pts_block = section["player_points"]
+                if isinstance(pts_block, dict):
+                    points_total = _maybe_float(pts_block.get("total"))
+            if "player_projected_points" in section and projected_total is None:
+                proj_block = section["player_projected_points"]
+                if isinstance(proj_block, dict):
+                    projected_total = _maybe_float(proj_block.get("total"))
         bench_slots = {"BN", "BENCH"}
-        on_bench = (selected_position or "").upper() in bench_slots
+        slot_upper = (selected_position or "").upper()
+        on_bench = slot_upper in bench_slots
+        on_injured_reserve = slot_upper.startswith("IR") or slot_upper in {"IL", "DL"}
         out.append({
             "player_key": pmeta.get("player_key"),
             "name": pmeta.get("name", {}).get("full") if isinstance(pmeta.get("name"), dict) else pmeta.get("name"),
             "eligible_positions": eligible,
             "selected_position": selected_position,
             "on_bench": on_bench,
+            "on_injured_reserve": on_injured_reserve,
+            "points": points_total,
+            "projected_points": projected_total,
+            "_order": idx,
         })
+    def _category(player: Dict[str, Any]) -> int:
+        if player["on_injured_reserve"]:
+            return 2
+        if player["on_bench"]:
+            return 1
+        return 0
+    out.sort(key=lambda p: (_category(p), p["_order"]))
+    for player in out:
+        player.pop("_order", None)
     return {"team_key": meta.get("team_key"), "name": meta.get("name"), "players": out}
 
 

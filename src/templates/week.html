@@ -20,6 +20,9 @@
       {% if m.teams[0].proj and m.teams[1].proj %}
       <div class="muted">Projected: {{ m.teams[0].proj }} / {{ m.teams[1].proj }}</div>
       {% endif %}
+      {% if m.slug %}
+      <div><a href="./{{ m.slug }}">Matchup details →</a></div>
+      {% endif %}
     </div>
   {% endfor %}
   </div>

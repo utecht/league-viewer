@@ -191,6 +191,65 @@
       font-weight: 600;
     }
 
+    .ir-row {
+      background: #fef2f2;
+    }
+
+    .ir-row td {
+      border-bottom-color: #fca5a5;
+    }
+
+    .ir-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      margin-left: 8px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-radius: 999px;
+      background: #dc2626;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .matchup-scoreline {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .score-number {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin: 8px 0;
+    }
+
+    .score-divider {
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--muted);
+    }
+
+    .matchup-grid {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    .team-panel table {
+      margin-top: 12px;
+    }
+
+    .points-cell,
+    th.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
     .slot-cell {
       font-weight: 600;
       white-space: nowrap;
@@ -218,6 +277,15 @@
       th,
       td {
         font-size: 0.9rem;
+      }
+
+      .matchup-scoreline {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .score-divider {
+        display: none;
       }
     }
   </style>

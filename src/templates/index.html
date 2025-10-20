@@ -15,8 +15,6 @@
   },
   "event": scoreboard
 } %}
-{% extends "base.html" %}
-{% block body %}{% endblock %}
 {% set content %}
 <section>
   <h2>Standings ({{ season }})</h2>
@@ -42,6 +40,9 @@
         <div><strong>{{ m.teams[1].name }}</strong> — {{ m.teams[1].points }} pts</div>
         {% if m.teams[0].proj and m.teams[1].proj %}
         <div class="muted">Projected: {{ m.teams[0].proj }} / {{ m.teams[1].proj }}</div>
+        {% endif %}
+        {% if m.slug %}
+        <div><a href="./{{ m.slug }}">Matchup details →</a></div>
         {% endif %}
       </div>
       {% endfor %}
