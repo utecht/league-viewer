@@ -1,0 +1,58 @@
+{% set title = "All Rosters" %}
+{% set heading = "All Team Rosters" %}
+{% set my_team_slug = None %}
+{% set roster_parts = namespace(items=[]) %}
+{% for entry in teams %}
+  {% set _ = roster_parts.items.append({
+    "@type": "SportsTeam",
+    "name": entry.team.name,
+    "url": "./" ~ entry.slug ~ ".html"
+  }) %}
+{% endfor %}
+{% set structured_data = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": heading,
+  "dateModified": updated_at,
+  "hasPart": roster_parts.items
+} %}
+{% set content %}
+<section>
+  <h2>League Rosters</h2>
+  <p class="muted">Season {{ season }}</p>
+  {% if teams %}
+  <div class="matchup-grid">
+    {% for entry in teams %}
+    <div class="team-panel">
+      <h3><a href="./{{ entry.slug }}.html">{{ entry.team.name }}</a></h3>
+      <table>
+        <thead>
+          <tr><th>Slot</th><th>Player</th><th>Eligible Positions</th></tr>
+        </thead>
+        <tbody>
+          {% for p in entry.team.players %}
+          {% set row_class = (("bench-row " if p.on_bench else "") + ("ir-row" if p.on_injured_reserve else "")).strip() %}
+          <tr{% if row_class %} class="{{ row_class }}"{% endif %}>
+            <td class="slot-cell">
+              {{ p.selected_position if p.selected_position else "—" }}
+              {% if p.on_bench %}
+                <span class="bench-badge">On Bench</span>
+              {% elif p.on_injured_reserve %}
+                <span class="ir-badge">IR</span>
+              {% endif %}
+            </td>
+            <td>{{ p.name }}</td>
+            <td>{{ p.eligible_positions|join(", ") }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p>No roster data is available right now.</p>
+  {% endif %}
+</section>
+{% endset %}
+{% include "base.html" %}
