@@ -115,6 +115,7 @@ open(SITE_DIR/"index.html", "w").write(index_html)
 team_list = map_teams(teams)
 
 # Basic roster snapshot per team (optional: skip to reduce calls)
+all_rosters = []
 for t in team_list:
     roster_json = yc.get_json(f"team/{t['team_key']}/roster")
     roster_norm = map_roster(roster_json)
@@ -124,6 +125,18 @@ for t in team_list:
         season=SEASON
     )
     open(SITE_DIR/f"{t['slug']}.html", "w").write(html)
+    all_rosters.append({
+        "slug": t["slug"],
+        "team": roster_norm,
+    })
+
+roster_entries = sorted(all_rosters, key=lambda entry: (entry["team"].get("name") or "").lower())
+rosters_html = render("rosters.html",
+    updated_at=ts,
+    season=SEASON,
+    teams=roster_entries
+)
+open(SITE_DIR/"rosters.html", "w").write(rosters_html)
 
 # Week page (single 'current' week)
 if score_rows:
@@ -141,6 +154,7 @@ else:
 open(SITE_DIR/"robots.txt", "w").write("User-agent: *\nAllow: /\n")
 open(SITE_DIR/"sitemap.txt", "w").write("\n".join(
     ["https://<YOUR_USERNAME>.github.io/<YOUR_REPO>/"] +
+    ["https://<YOUR_USERNAME>.github.io/<YOUR_REPO>/rosters.html"] +
     [f"https://<YOUR_USERNAME>.github.io/<YOUR_REPO>/{t['slug']}.html" for t in team_list] +
     ([f"https://<YOUR_USERNAME>.github.io/<YOUR_REPO>/week-{wk}.html"] if wk else []) +
     [f"https://<YOUR_USERNAME>.github.io/<YOUR_REPO>/{m['slug']}" for m in matchup_pages]
