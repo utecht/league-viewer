@@ -1,0 +1,2404 @@
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>All Rosters</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      color-scheme: light;
+      --page-bg: #f3f4f8;
+      --card-bg: #ffffff;
+      --primary: #1f6feb;
+      --primary-light: #e7f1ff;
+      --text-color: #1f2933;
+      --muted: #5f6c7b;
+      --border: #d2d6dc;
+      --shadow: 0 12px 24px rgba(31, 47, 70, 0.08);
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 32px 16px 48px;
+      line-height: 1.6;
+      background: radial-gradient(circle at top left, #fefefe, var(--page-bg));
+      color: var(--text-color);
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    a:hover,
+    a:focus {
+      text-decoration: underline;
+    }
+
+    .page-shell {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: var(--card-bg);
+      padding: 28px 32px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    header h1 {
+      margin: 0 0 12px;
+      font-size: clamp(1.75rem, 3vw, 2.25rem);
+      letter-spacing: -0.02em;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    nav a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    nav a:hover,
+    nav a:focus {
+      background: rgba(31, 111, 235, 0.16);
+      transform: translateY(-1px);
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    section {
+      background: var(--card-bg);
+      padding: 24px 28px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    section h2 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      font-size: 1.4rem;
+      letter-spacing: -0.01em;
+    }
+
+    .cards {
+      display: grid;
+      gap: 16px;
+    }
+
+    .cards > li,
+    .matchup-card {
+      list-style: none;
+      background: linear-gradient(135deg, rgba(31, 111, 235, 0.08), rgba(31, 111, 235, 0.02));
+      border-radius: calc(var(--radius) - 6px);
+      padding: 16px 18px;
+      border: 1px solid rgba(31, 111, 235, 0.1);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      overflow: hidden;
+      border-radius: calc(var(--radius) - 6px);
+      background: #fff;
+    }
+
+    th,
+    td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      font-size: 0.95rem;
+    }
+
+    th {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      background: #f8f9fb;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #fbfcff;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--text-color);
+    }
+
+    .list-unstyled {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 0.9em;
+    }
+
+    .bench-row {
+      background: #fff7ed;
+    }
+
+    .bench-row td {
+      border-bottom-color: #f4c28f;
+    }
+
+    .bench-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      margin-left: 8px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-radius: 999px;
+      background: #f97316;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .ir-row {
+      background: #fef2f2;
+    }
+
+    .ir-row td {
+      border-bottom-color: #fca5a5;
+    }
+
+    .ir-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      margin-left: 8px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-radius: 999px;
+      background: #dc2626;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .matchup-scoreline {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .score-number {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin: 8px 0;
+    }
+
+    .score-divider {
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--muted);
+    }
+
+    .matchup-grid {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    .team-panel table {
+      margin-top: 12px;
+    }
+
+    .points-cell,
+    th.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .slot-cell {
+      font-weight: 600;
+      white-space: nowrap;
+      color: #b54708;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 24px 14px 40px;
+      }
+
+      header,
+      section {
+        padding: 20px;
+      }
+
+      table,
+      th,
+      td {
+        font-size: 0.9rem;
+      }
+
+      .matchup-scoreline {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .score-divider {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="page-shell">
+  <header>
+    <h1>All Team Rosters</h1>
+    <nav>
+      <a href="./index.html">🏠 Home</a>
+      <a href="./rosters.html">🧾 All Rosters</a>
+      
+    </nav>
+  </header>
+  <main>
+    
+<section>
+  <h2>League Rosters</h2>
+  <p class="muted">Season 2025</p>
+  
+  <div class="matchup-grid">
+    
+    <div class="team-panel">
+      <h3><a href="./461-l-842342-t-2.html">bryce&#39;s Great Team</a></h3>
+      <table>
+        <thead>
+          <tr><th>Slot</th><th>Player</th><th>Eligible Positions</th></tr>
+        </thead>
+        <tbody>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              QB
+              
+            </td>
+            <td>Jared Goff</td>
+            <td>QB</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Courtland Sutton</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Rashee Rice</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>Jahmyr Gibbs</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>Rico Dowdle</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              TE
+              
+            </td>
+            <td>Travis Kelce</td>
+            <td>TE, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              W/R/T
+              
+            </td>
+            <td>Mike Evans</td>
+            <td>WR, W/R/T, IR</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              K
+              
+            </td>
+            <td>Chris Boswell</td>
+            <td>K</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              DEF
+              
+            </td>
+            <td>Houston</td>
+            <td>DEF</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              D
+              
+            </td>
+            <td>Travis Hunter</td>
+            <td>WR, W/R/T, D</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Rashid Shaheed</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Khalil Shakir</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Terry McLaurin</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Washington</td>
+            <td>DEF</td>
+          </tr>
+          
+          
+          <tr class="ir-row">
+            <td class="slot-cell">
+              IR
+              
+                <span class="ir-badge">IR</span>
+              
+            </td>
+            <td>Najee Harris</td>
+            <td>RB, W/R/T, IR</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="team-panel">
+      <h3><a href="./461-l-842342-t-12.html">Charlestown Chiefs</a></h3>
+      <table>
+        <thead>
+          <tr><th>Slot</th><th>Player</th><th>Eligible Positions</th></tr>
+        </thead>
+        <tbody>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              QB
+              
+            </td>
+            <td>Drake Maye</td>
+            <td>QB</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>George Pickens</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Keenan Allen</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>Saquon Barkley</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>Jaylen Warren</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              TE
+              
+            </td>
+            <td>Sam LaPorta</td>
+            <td>TE, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              W/R/T
+              
+            </td>
+            <td>DK Metcalf</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              K
+              
+            </td>
+            <td>Harrison Butker</td>
+            <td>K</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              DEF
+              
+            </td>
+            <td>New England</td>
+            <td>DEF</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              D
+              
+            </td>
+            <td>Jordyn Brooks</td>
+            <td>D</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Jacory Croskey-Merritt</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Isiah Pacheco</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Lamar Jackson</td>
+            <td>QB</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Brock Bowers</td>
+            <td>TE, W/R/T, IR</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="team-panel">
+      <h3><a href="./461-l-842342-t-10.html">Dolphan</a></h3>
+      <table>
+        <thead>
+          <tr><th>Slot</th><th>Player</th><th>Eligible Positions</th></tr>
+        </thead>
+        <tbody>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              QB
+              
+            </td>
+            <td>Jayden Daniels</td>
+            <td>QB</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Wan&#39;Dale Robinson</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Amon-Ra St. Brown</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>Chase Brown</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>Rhamondre Stevenson</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              TE
+              
+            </td>
+            <td>Harold Fannin Jr.</td>
+            <td>TE, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              W/R/T
+              
+            </td>
+            <td>Matthew Golden</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              K
+              
+            </td>
+            <td>Cameron Dicker</td>
+            <td>K</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              DEF
+              
+            </td>
+            <td>Chicago</td>
+            <td>DEF</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              D
+              
+            </td>
+            <td>T.J. Watt</td>
+            <td>D</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Hollywood Brown</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Emeka Egbuka</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>James Cook III</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Minnesota</td>
+            <td>DEF</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="team-panel">
+      <h3><a href="./461-l-842342-t-6.html">Jackson</a></h3>
+      <table>
+        <thead>
+          <tr><th>Slot</th><th>Player</th><th>Eligible Positions</th></tr>
+        </thead>
+        <tbody>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              QB
+              
+            </td>
+            <td>Jordan Love</td>
+            <td>QB</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Marvin Harrison Jr.</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Drake London</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>Tony Pollard</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>David Montgomery</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              TE
+              
+            </td>
+            <td>Tucker Kraft</td>
+            <td>TE, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              W/R/T
+              
+            </td>
+            <td>Jordan Addison</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              K
+              
+            </td>
+            <td>Brandon Aubrey</td>
+            <td>K</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              DEF
+              
+            </td>
+            <td>Philadelphia</td>
+            <td>DEF</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              D
+              
+            </td>
+            <td>Zack Baun</td>
+            <td>D</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Kenneth Gainwell</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Josh Allen</td>
+            <td>QB</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Derrick Henry</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Hunter Henry</td>
+            <td>TE, W/R/T</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="team-panel">
+      <h3><a href="./461-l-842342-t-1.html">LSU Craig</a></h3>
+      <table>
+        <thead>
+          <tr><th>Slot</th><th>Player</th><th>Eligible Positions</th></tr>
+        </thead>
+        <tbody>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              QB
+              
+            </td>
+            <td>Matthew Stafford</td>
+            <td>QB</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Romeo Doubs</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Tre Tucker</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>Jonathan Taylor</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>De&#39;Von Achane</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              TE
+              
+            </td>
+            <td>Dallas Goedert</td>
+            <td>TE, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              W/R/T
+              
+            </td>
+            <td>Kareem Hunt</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              K
+              
+            </td>
+            <td>Wil Lutz</td>
+            <td>K</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              DEF
+              
+            </td>
+            <td>Denver</td>
+            <td>DEF</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              D
+              
+            </td>
+            <td>Byron Young</td>
+            <td>D</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Deebo Samuel</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>AJ Barner</td>
+            <td>TE, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Daniel Jones</td>
+            <td>QB</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Aaron Jones Sr.</td>
+            <td>RB, W/R/T, IR</td>
+          </tr>
+          
+          
+          <tr class="ir-row">
+            <td class="slot-cell">
+              IR
+              
+                <span class="ir-badge">IR</span>
+              
+            </td>
+            <td>Joe Burrow</td>
+            <td>QB, IR</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="team-panel">
+      <h3><a href="./461-l-842342-t-7.html">Matt&#39;s Meeples</a></h3>
+      <table>
+        <thead>
+          <tr><th>Slot</th><th>Player</th><th>Eligible Positions</th></tr>
+        </thead>
+        <tbody>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              QB
+              
+            </td>
+            <td>Justin Herbert</td>
+            <td>QB</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Tetairoa McMillan</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>DJ Moore</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>Breece Hall</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>Alvin Kamara</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              TE
+              
+            </td>
+            <td>Darren Waller</td>
+            <td>TE, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              W/R/T
+              
+            </td>
+            <td>Christian McCaffrey</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              K
+              
+            </td>
+            <td>Matt Gay</td>
+            <td>K</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              DEF
+              
+            </td>
+            <td>Cleveland</td>
+            <td>DEF</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              D
+              
+            </td>
+            <td>Robert Spillane</td>
+            <td>D</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Jakobi Meyers</td>
+            <td>WR, W/R/T, IR</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Puka Nacua</td>
+            <td>WR, W/R/T, IR</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Woody Marks</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Chris Godwin Jr.</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="team-panel">
+      <h3><a href="./461-l-842342-t-8.html">Mighty Taniwha</a></h3>
+      <table>
+        <thead>
+          <tr><th>Slot</th><th>Player</th><th>Eligible Positions</th></tr>
+        </thead>
+        <tbody>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              QB
+              
+            </td>
+            <td>Caleb Williams</td>
+            <td>QB</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Xavier Worthy</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Quentin Johnston</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>D&#39;Andre Swift</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>Javonte Williams</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              TE
+              
+            </td>
+            <td>George Kittle</td>
+            <td>TE, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              W/R/T
+              
+            </td>
+            <td>CeeDee Lamb</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              K
+              
+            </td>
+            <td>Chase McLaughlin</td>
+            <td>K</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              DEF
+              
+            </td>
+            <td>Kansas City</td>
+            <td>DEF</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              D
+              
+            </td>
+            <td>Foyesade Oluokun</td>
+            <td>D</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Nico Collins</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Travis Etienne Jr.</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Ricky Pearsall</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Jameson Williams</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="ir-row">
+            <td class="slot-cell">
+              IR
+              
+                <span class="ir-badge">IR</span>
+              
+            </td>
+            <td>Omarion Hampton</td>
+            <td>RB, W/R/T, IR</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="team-panel">
+      <h3><a href="./461-l-842342-t-5.html">Robber Barons</a></h3>
+      <table>
+        <thead>
+          <tr><th>Slot</th><th>Player</th><th>Eligible Positions</th></tr>
+        </thead>
+        <tbody>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              QB
+              
+            </td>
+            <td>Patrick Mahomes</td>
+            <td>QB</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Tee Higgins</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Michael Pittman Jr.</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>Josh Jacobs</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>Tyler Allgeier</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              TE
+              
+            </td>
+            <td>Tyler Warren</td>
+            <td>TE, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              W/R/T
+              
+            </td>
+            <td>Zach Ertz</td>
+            <td>TE, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              K
+              
+            </td>
+            <td>Michael Badgley</td>
+            <td>K</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              DEF
+              
+            </td>
+            <td>Carolina</td>
+            <td>DEF</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              D
+              
+            </td>
+            <td>Edgerrin Cooper</td>
+            <td>D</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Darius Slayton</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Davante Adams</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Kyren Williams</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Jaxson Dart</td>
+            <td>QB</td>
+          </tr>
+          
+          
+          <tr class="ir-row">
+            <td class="slot-cell">
+              IR
+              
+                <span class="ir-badge">IR</span>
+              
+            </td>
+            <td>Trey Benson</td>
+            <td>RB, W/R/T, IR</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="team-panel">
+      <h3><a href="./461-l-842342-t-11.html">Shapeshifters</a></h3>
+      <table>
+        <thead>
+          <tr><th>Slot</th><th>Player</th><th>Eligible Positions</th></tr>
+        </thead>
+        <tbody>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              QB
+              
+            </td>
+            <td>Justin Fields</td>
+            <td>QB</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Brian Thomas Jr.</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Stefon Diggs</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>Bijan Robinson</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>Quinshon Judkins</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              TE
+              
+            </td>
+            <td>Trey McBride</td>
+            <td>TE, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              W/R/T
+              
+            </td>
+            <td>DeVonta Smith</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              K
+              
+            </td>
+            <td>Cam Little</td>
+            <td>K</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              DEF
+              
+            </td>
+            <td>Los Angeles</td>
+            <td>DEF</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              D
+              
+            </td>
+            <td>Zaire Franklin</td>
+            <td>D</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Garrett Wilson</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Jauan Jennings</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Bhayshul Tuten</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Kyler Murray</td>
+            <td>QB, IR</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="team-panel">
+      <h3><a href="./461-l-842342-t-4.html">The 12th Man</a></h3>
+      <table>
+        <thead>
+          <tr><th>Slot</th><th>Player</th><th>Eligible Positions</th></tr>
+        </thead>
+        <tbody>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              QB
+              
+            </td>
+            <td>Bo Nix</td>
+            <td>QB</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Jaylen Waddle</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Rome Odunze</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>Zach Charbonnet</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>Chuba Hubbard</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              TE
+              
+            </td>
+            <td>Dalton Schultz</td>
+            <td>TE, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              W/R/T
+              
+            </td>
+            <td>Justin Jefferson</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              K
+              
+            </td>
+            <td>Jake Bates</td>
+            <td>K</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              DEF
+              
+            </td>
+            <td>Miami</td>
+            <td>DEF</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              D
+              
+            </td>
+            <td>Nik Bonitto</td>
+            <td>D</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Kenneth Walker III</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Keon Coleman</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Mark Andrews</td>
+            <td>TE, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>J.J. McCarthy</td>
+            <td>QB</td>
+          </tr>
+          
+          
+          <tr class="ir-row">
+            <td class="slot-cell">
+              IR
+              
+                <span class="ir-badge">IR</span>
+              
+            </td>
+            <td>Joe Mixon</td>
+            <td>RB, W/R/T, IR</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="team-panel">
+      <h3><a href="./461-l-842342-t-3.html">The Alabama Mans</a></h3>
+      <table>
+        <thead>
+          <tr><th>Slot</th><th>Player</th><th>Eligible Positions</th></tr>
+        </thead>
+        <tbody>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              QB
+              
+            </td>
+            <td>Baker Mayfield</td>
+            <td>QB</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Ja&#39;Marr Chase</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>A.J. Brown</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>Cam Skattebo</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>Jordan Mason</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              TE
+              
+            </td>
+            <td>Jake Ferguson</td>
+            <td>TE, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              W/R/T
+              
+            </td>
+            <td>Ladd McConkey</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              K
+              
+            </td>
+            <td>Daniel Carlson</td>
+            <td>K</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              DEF
+              
+            </td>
+            <td>Detroit</td>
+            <td>DEF</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              D
+              
+            </td>
+            <td>Nick Bolton</td>
+            <td>D</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>TreVeyon Henderson</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Dak Prescott</td>
+            <td>QB</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Jerry Jeudy</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Luke McCaffrey</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="team-panel">
+      <h3><a href="./461-l-842342-t-9.html">Trogdor the Burninator</a></h3>
+      <table>
+        <thead>
+          <tr><th>Slot</th><th>Player</th><th>Eligible Positions</th></tr>
+        </thead>
+        <tbody>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              QB
+              
+            </td>
+            <td>Jalen Hurts</td>
+            <td>QB</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Chris Olave</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              WR
+              
+            </td>
+            <td>Zay Flowers</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>J.K. Dobbins</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              RB
+              
+            </td>
+            <td>Rachaad White</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              TE
+              
+            </td>
+            <td>T.J. Hockenson</td>
+            <td>TE, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              W/R/T
+              
+            </td>
+            <td>Cooper Kupp</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              DEF
+              
+            </td>
+            <td>Green Bay</td>
+            <td>DEF</td>
+          </tr>
+          
+          
+          <tr>
+            <td class="slot-cell">
+              D
+              
+            </td>
+            <td>Nick Cross</td>
+            <td>D</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Ashton Jeanty</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Jaxon Smith-Njigba</td>
+            <td>WR, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Sam Darnold</td>
+            <td>QB</td>
+          </tr>
+          
+          
+          <tr class="bench-row">
+            <td class="slot-cell">
+              BN
+              
+                <span class="bench-badge">On Bench</span>
+              
+            </td>
+            <td>Bucky Irving</td>
+            <td>RB, W/R/T</td>
+          </tr>
+          
+          
+          <tr class="ir-row">
+            <td class="slot-cell">
+              IR
+              
+                <span class="ir-badge">IR</span>
+              
+            </td>
+            <td>Dalton Kincaid</td>
+            <td>TE, W/R/T</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+  </div>
+  
+</section>
+
+  </main>
+  <footer>Updated 2025-10-22T05:16:09.272940Z</footer>
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "dateModified": "2025-10-22T05:16:09.272940Z",
+  "hasPart": [
+    {
+      "@type": "SportsTeam",
+      "name": "bryce\u0027s Great Team",
+      "url": "./461-l-842342-t-2.html"
+    },
+    {
+      "@type": "SportsTeam",
+      "name": "Charlestown Chiefs",
+      "url": "./461-l-842342-t-12.html"
+    },
+    {
+      "@type": "SportsTeam",
+      "name": "Dolphan",
+      "url": "./461-l-842342-t-10.html"
+    },
+    {
+      "@type": "SportsTeam",
+      "name": "Jackson",
+      "url": "./461-l-842342-t-6.html"
+    },
+    {
+      "@type": "SportsTeam",
+      "name": "LSU Craig",
+      "url": "./461-l-842342-t-1.html"
+    },
+    {
+      "@type": "SportsTeam",
+      "name": "Matt\u0027s Meeples",
+      "url": "./461-l-842342-t-7.html"
+    },
+    {
+      "@type": "SportsTeam",
+      "name": "Mighty Taniwha",
+      "url": "./461-l-842342-t-8.html"
+    },
+    {
+      "@type": "SportsTeam",
+      "name": "Robber Barons",
+      "url": "./461-l-842342-t-5.html"
+    },
+    {
+      "@type": "SportsTeam",
+      "name": "Shapeshifters",
+      "url": "./461-l-842342-t-11.html"
+    },
+    {
+      "@type": "SportsTeam",
+      "name": "The 12th Man",
+      "url": "./461-l-842342-t-4.html"
+    },
+    {
+      "@type": "SportsTeam",
+      "name": "The Alabama Mans",
+      "url": "./461-l-842342-t-3.html"
+    },
+    {
+      "@type": "SportsTeam",
+      "name": "Trogdor the Burninator",
+      "url": "./461-l-842342-t-9.html"
+    }
+  ],
+  "name": "All Team Rosters"
+}
+</script>
+
+</body>
+</html>
